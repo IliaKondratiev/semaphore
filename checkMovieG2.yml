@@ -4,7 +4,7 @@
 #  git-version: go-git
 
 - name: Check for mounted disk on macOS
-  hosts: your_mac_os_host_or_group
+  hosts: macs
   gather_facts: no
 
   tasks:
