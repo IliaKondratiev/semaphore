@@ -1,1 +1,24 @@
-// тут будет проверка, подключен ли диск /Volumes/MovieG2C
+---
+# Добавьте этот раздел в самое начало файла
+# ansible-semaphore-meta:
+#  git-version: go-git
+
+- name: Check for mounted disk on macOS
+  hosts: your_mac_os_host_or_group
+  gather_facts: no
+
+  tasks:
+    - name: Check if /Volumes/MovieG2C is a mount point
+      ansible.builtin.stat:
+        path: /Volumes/MovieG2C
+      register: mount_info
+
+    - name: Report status
+      ansible.builtin.debug:
+        msg: "Диск /Volumes/MovieG2C смонтирован."
+      when: mount_info.stat.exists and mount_info.stat.ismnt
+
+    - name: Fail if disk is not mounted
+      ansible.builtin.fail:
+        msg: "ОШИБКА: Диск /Volumes/MovieG2C не смонтирован."
+      when: not mount_info.stat.exists or not mount_info.stat.ismnt
