@@ -1,0 +1,42 @@
+services:
+    semaphore_db:
+        image: postgres
+        environment:
+            POSTGRES_USER: semaphore
+            POSTGRES_PASSWORD: ewyqs6h1v7
+            POSTGRES_DB: semaphore
+        volumes:
+            - semaphore_postgres:/var/lib/postgresql/data
+        networks:
+            - semaphore_network
+    semaphore:
+        ports:
+            - 127.0.0.1:3000:3000
+        depends_on:
+            - semaphore_db
+        image: public.ecr.aws/semaphore/pro/server:v2.16.18
+        environment:
+            SEMAPHORE_DB_DIALECT: postgres
+            SEMAPHORE_DB_HOST: semaphore_db
+            SEMAPHORE_DB_NAME: semaphore
+            SEMAPHORE_DB_USER: semaphore
+            SEMAPHORE_DB_PASS: ewyqs6h1v7
+            SEMAPHORE_ADMIN: ilia
+            SEMAPHORE_ADMIN_PASSWORD: iliaAS21
+            SEMAPHORE_ADMIN_NAME: Ilia
+            SEMAPHORE_ADMIN_EMAIL: ilia@postfx.ru
+            SEMAPHORE_WEB_ROOT: "https://www.postfx.ru/semaphore"
+        volumes:
+            - semaphore_data:/var/lib/semaphore
+            - semaphore_config:/etc/semaphore
+            - semaphore_tmp:/tmp/semaphore
+            - ./:/opt/semaphore/ansible:ro
+        networks:
+            - semaphore_network
+volumes:
+    semaphore_data:
+    semaphore_config:
+    semaphore_tmp:
+    semaphore_postgres:
+networks:
+    semaphore_network: {driver: "bridge"}
